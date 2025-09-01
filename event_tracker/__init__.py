@@ -29,39 +29,31 @@ class EventTracker:
     @classmethod
     def track(
         cls,
-        event: Union[str, Enum],
+        event: Union[str, Enum, Exception],
         *,
         tags: Optional[Dict[Union[str, Enum], Any]] = None,
         context: Optional[Dict[str, Any]] = None,
         level: Optional[str] = None,
-        error: Optional[Exception] = None,
     ) -> None:
         """
         Track an event with tags, context, and error handling
 
         Args:
-            event: Event name or enum
+            event: Event name or enum or Exception
             tags: Key-value pairs for indexing and filtering
             context: Rich data for detailed event analysis
             level: Severity level (info, warning, error)
-            error: Associated exception (if any)
         """
 
         event_name = cls._extract_value(event)
 
         if tags:
-            for tag, value in tags.items():
-                tag_name = cls._extract_value(tag)
-                processed_value = cls._extract_value(value)
-                sentry_sdk.set_tag(tag_name, processed_value)
+            cls.set_tags(tags)
 
         if context:
             cls.set_contexts(context)
 
-        if error:
-            sentry_sdk.capture_exception(error)
-            if event_name:
-                sentry_sdk.capture_message(f"{event_name}", level=level
-                                           or "error")
+        if isinstance(event, Exception):
+            sentry_sdk.capture_exception(event)
         else:
             sentry_sdk.capture_message(event_name, level=level)
