@@ -7,7 +7,7 @@ authors = [
     {name = "Johnathan Barbosa de Araujo", email = "johnathan.araujo@maistodos.com.br"}
 ]
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
     "sentry-sdk (>=2.35.2,<3.0.0)"
 ]
@@ -19,4 +19,5 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
+pytest = "^8.4.1"
 

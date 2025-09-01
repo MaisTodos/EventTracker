@@ -11,21 +11,20 @@ class EventTracker:
         return value.value if isinstance(value, Enum) else value
 
     @classmethod
-    def set_contexts(cls, context: Dict[str, Any]) -> None:
+    def set_contexts(cls, context: Dict[Union[str, Enum], Dict]) -> None:
         """Set context data on Sentry"""
         context = context or {}
 
         for key, value in context.items():
-            processed_value = cls._extract_value(value)
-            sentry_sdk.set_context(key, {"value": processed_value})
+            sentry_sdk.set_context(cls._extract_value(key), value)
 
     @classmethod
-    def set_tags(cls, tags: Dict[str, str], value: Any) -> None:
+    def set_tags(cls, tags: Dict[Union[str, Enum], Union[str, Enum]]) -> None:
         """Set tags (for filtering/indexing)"""
         tags = tags or {}
 
         for key, value in tags.items():
-            sentry_sdk.set_tag(key, cls._extract_value(value))
+            sentry_sdk.set_tag(cls._extract_value(key), cls._extract_value(value))
 
     @classmethod
     def track(
