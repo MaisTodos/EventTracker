@@ -23,7 +23,7 @@ class EventTracker:
         cls,
         sentry_dsn: str,
         environment: str,
-        tracing_sample_rate: int = 0,
+        tracing_sample_rate: float = 0,
     ):
         """
         Initialize Sentry SDK for error tracking and performance monitoring.
@@ -39,8 +39,8 @@ class EventTracker:
 
         Args:
             sentry_dsn: Sentry Data Source Name (DSN) for project
-            environment: Deployment environment (e.g., production, staging)
-            tracing_sample_rate: Sampling rate for tracing (0 to disable)
+            environment: Deployment environment
+            tracing_sample_rate: Sampling rate for tracing (0 to disable, 0.5 to half, 1 to all)
         """
 
         # TODO: open-telemetry integration
