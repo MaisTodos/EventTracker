@@ -1,5 +1,5 @@
 [project]
-name = "eventtracker"
+name = "event_tracker"
 version = "0.1.0"
 description = ""
 authors = [
