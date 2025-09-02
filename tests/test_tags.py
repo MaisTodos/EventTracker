@@ -1,6 +1,7 @@
 from unittest.mock import call
 
-from event_tracker import EventTracker, EventTrackerTags
+from event_tracker import EventTracker
+from event_tracker.enums import EventTrackerTags
 
 
 def test_set_tags(set_tag_mock):

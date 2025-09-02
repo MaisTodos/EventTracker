@@ -1,6 +1,7 @@
 from unittest.mock import call
 
-from event_tracker import EventTracker, EventTrackerContexts
+from event_tracker import EventTracker
+from event_tracker.enums import EventTrackerContexts
 
 
 def test_set_contexts(set_context_mock):
