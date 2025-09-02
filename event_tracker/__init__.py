@@ -4,6 +4,17 @@ from enum import Enum
 import sentry_sdk
 
 
+class EventTrackerTags(str, Enum):
+    ERROR = "ERROR"
+    STATUS_CODE = "STATUS_CODE"
+    USER_ID = "USER_ID"
+
+
+class EventTrackerContexts(str, Enum):
+    REQUEST_DATA = "REQUEST_DATA"
+    RESPONSE_DATA = "RESPONSE_DATA"
+
+
 class EventTracker:
     @staticmethod
     def _extract_value(value: Any) -> Any:
