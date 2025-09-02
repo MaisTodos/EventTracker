@@ -2,9 +2,9 @@ from enum import Enum
 
 
 class DatabaseOperation(Enum):
-    INSERT = "insert"
-    UPDATE = "update"
-    DELETE = "delete"
-    SELECT = "select"
-    TRANSACTION_COMMIT = "transaction_commit"
-    TRANSACTION_ROLLBACK = "transaction_rollback"
+    INSERT = "INSERT"
+    UPDATE = "UPDATE"
+    DELETE = "DELETE"
+    SELECT = "SELECT"
+    TRANSACTION_COMMIT = "TRANSACTION_COMMIT"
+    TRANSACTION_ROLLBACK = "TRANSACTION_ROLLBACK"

@@ -6,18 +6,9 @@ import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
 
-class EventTrackerTags(str, Enum):
-    ERROR = "ERROR"
-    STATUS_CODE = "STATUS_CODE"
-    USER_ID = "USER_ID"
-
-
-class EventTrackerContexts(str, Enum):
-    REQUEST_DATA = "REQUEST_DATA"
-    RESPONSE_DATA = "RESPONSE_DATA"
-
-
 class EventTracker:
+    # TODO: add a event_handler rate
+
     @classmethod
     def init_sentry(
         cls,
