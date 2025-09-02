@@ -1,4 +1,5 @@
 from unittest.mock import call
+
 from event_tracker import EventTracker, EventTrackerContexts
 
 
@@ -25,4 +26,7 @@ def test_set_contexts_when_not_allowed_type_context(set_context_mock):
     )
 
     assert call("user", {"value": "john.doe"}) in set_context_mock.call_args_list
-    assert not call(Exception, {"error": Exception("Test")}) in set_context_mock.call_args_list
+    assert (
+        not call(Exception, {"error": Exception("Test")})
+        in set_context_mock.call_args_list
+    )

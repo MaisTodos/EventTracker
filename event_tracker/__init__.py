@@ -1,7 +1,9 @@
-from typing import Any, Dict, Union, Optional
+import logging
 from enum import Enum
+from typing import Any, Dict, Optional, Union
 
 import sentry_sdk
+from sentry_sdk.integrations.logging import LoggingIntegration
 
 
 class EventTrackerTags(str, Enum):
@@ -16,6 +18,39 @@ class EventTrackerContexts(str, Enum):
 
 
 class EventTracker:
+
+    @classmethod
+    def init_sentry(
+        cls,
+        sentry_dsn: str,
+        environment: str,
+        tracing_sample_rate: int = 0,
+    ):
+        # TODO: open-telemetry integration
+
+        # Set sentry to not capture error logs as issues
+        sentry_logging_integration = LoggingIntegration(
+            level=logging.DEBUG,
+            event_level=None,
+        )
+
+        # Set tracing_sample_rate
+        tracing_config = (
+            {"enable_tracing": False}
+            if tracing_sample_rate == 0
+            else {
+                "traces_sample_rate": tracing_sample_rate,
+                "enable_tracing": True,
+            }
+        )
+
+        sentry_sdk.init(
+            dsn=sentry_dsn,
+            environment=environment,
+            integrations=[sentry_logging_integration],
+            **tracing_config,
+        )
+
     @staticmethod
     def _extract_value(value: Any) -> Any:
         """Extract value from enum or return as-is"""

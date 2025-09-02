@@ -37,11 +37,9 @@ def test_track_when_all_infos(
     set_tag_mock,
     set_context_mock,
 ):
-    
+
     EventTracker.track(
-        "test_message",
-        tags={"user": "john.doe"},
-        context={"request": {"id": "1234"}}
+        "test_message", tags={"user": "john.doe"}, context={"request": {"id": "1234"}}
     )
 
     set_capture_message_mock.assert_called_once_with("test_message", level=None)

@@ -20,4 +20,6 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
 pytest = "^8.4.1"
+black = "^25.1.0"
+isort = "^6.0.1"
 

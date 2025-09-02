@@ -1,9 +1,9 @@
 from unittest.mock import call
+
 from event_tracker import EventTracker, EventTrackerTags
 
 
 def test_set_tags(set_tag_mock):
-    # TODO: add enum test on key(maybe on value too?)
     EventTracker.set_tags(
         {
             "user": "john.doe",
