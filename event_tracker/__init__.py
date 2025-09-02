@@ -24,7 +24,7 @@ class EventTracker:
     @classmethod
     def set_contexts(cls, context: Dict[Union[str, Enum], Dict]) -> None:
         """Set context data on Sentry"""
-        context = context or {}
+        context = context
 
         for key, value in context.items():
             sentry_sdk.set_context(cls._extract_value(key), value)
@@ -32,7 +32,7 @@ class EventTracker:
     @classmethod
     def set_tags(cls, tags: Dict[Union[str, Enum], Union[str, Enum]]) -> None:
         """Set tags (for filtering/indexing)"""
-        tags = tags or {}
+        tags = tags
 
         for key, value in tags.items():
             sentry_sdk.set_tag(cls._extract_value(key), cls._extract_value(value))
@@ -55,9 +55,6 @@ class EventTracker:
             context: Rich data for detailed event analysis
             level: Severity level (info, warning, error)
         """
-
-        event_name = cls._extract_value(event)
-
         if tags:
             cls.set_tags(tags)
 
@@ -67,4 +64,4 @@ class EventTracker:
         if isinstance(event, Exception):
             sentry_sdk.capture_exception(event)
         else:
-            sentry_sdk.capture_message(event_name, level=level)
+            sentry_sdk.capture_message(cls._extract_value(event), level=level)

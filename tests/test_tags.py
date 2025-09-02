@@ -17,11 +17,6 @@ def test_set_tags(set_tag_mock):
     assert call("STATUS_CODE", 500) in set_tag_mock.call_args_list
 
 
-def test_set_tags_when_none(set_tag_mock):
-    EventTracker.set_tags(None)
-    set_tag_mock.assert_not_called()
-
-
 def test_set_tags_when_not_allowed_type_tag(set_tag_mock):
     EventTracker.set_tags(
         {

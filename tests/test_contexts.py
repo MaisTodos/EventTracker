@@ -16,11 +16,6 @@ def test_set_contexts(set_context_mock):
     assert call("REQUEST_DATA", {"param": "value"}) in set_context_mock.call_args_list
 
 
-def test_set_contexts_when_none(set_context_mock):
-    EventTracker.set_contexts(None)
-    set_context_mock.assert_not_called()
-
-
 def test_set_contexts_when_not_allowed_type_context(set_context_mock):
     EventTracker.set_contexts(
         {

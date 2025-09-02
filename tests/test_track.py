@@ -29,3 +29,22 @@ def test_track_when_exception_event(
     set_capture_exception_mock.assert_called_once_with(test_exception)
     set_tag_mock.assert_not_called()
     set_context_mock.assert_not_called()
+
+
+def test_track_when_all_infos(
+    set_capture_message_mock,
+    set_capture_exception_mock,
+    set_tag_mock,
+    set_context_mock,
+):
+    
+    EventTracker.track(
+        "test_message",
+        tags={"user": "john.doe"},
+        context={"request": {"id": "1234"}}
+    )
+
+    set_capture_message_mock.assert_called_once_with("test_message", level=None)
+    set_capture_exception_mock.assert_not_called()
+    set_tag_mock.assert_called_once_with("user", "john.doe")
+    set_context_mock.assert_called_once_with("request", {"id": "1234"})
