@@ -23,7 +23,7 @@ def test_init_sentry_with_tracing(set_init_sentry_mock):
         sentry_dsn="SENTRY_DSN",
         sentry_trace_sample_rate=0.5,
     )
-    
+
     sentry_integrations = set_init_sentry_mock.call_args[1]["integrations"]
     set_init_sentry_mock.assert_called_once_with(
         dsn="SENTRY_DSN",
