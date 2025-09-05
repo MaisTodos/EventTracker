@@ -1,10 +1,9 @@
-from .http import HttpStatus
 from .auth import AuthStatus
+from .contexts import EventTrackerContexts
 from .database import DatabaseOperation
+from .http import HttpStatus
 from .performance import PerformanceLevel
 from .tags import EventTrackerTags
-from .contexts import EventTrackerContexts
-
 
 __all__ = [
     "HttpStatus",

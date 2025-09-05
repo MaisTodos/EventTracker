@@ -33,7 +33,5 @@ def set_capture_exception_mock():
 
 @pytest.fixture()
 def set_init_sentry_mock():
-    with patch(
-        "sentry_sdk.init", new_callable=MagicMock
-    ) as set_init_sentry_mock:
+    with patch("sentry_sdk.init", new_callable=MagicMock) as set_init_sentry_mock:
         yield set_init_sentry_mock

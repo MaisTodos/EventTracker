@@ -1,4 +1,3 @@
-
 from event_tracker import EventTracker
 
 
@@ -16,7 +15,6 @@ def test_init_sentry_without_tracing(set_init_sentry_mock):
         integrations=sentry_integrations,
         enable_tracing=False,
     )
-
 
 
 def test_init_sentry_with_tracing(set_init_sentry_mock):
