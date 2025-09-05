@@ -1,4 +1,4 @@
-name: Test
+name: Testing
 
 on:
   push:
@@ -45,14 +45,14 @@ jobs:
     - name: Install project
       run: poetry install --no-interaction
     
-    - name: Check code formatting with black
+    - name: Black
       run: |
         poetry run black --check --diff .
     
-    - name: Check import sorting with isort
+    - name: ISort
       run: |
         poetry run isort --check-only --diff .
     
-    - name: Run tests with pytest
+    - name: Tests
       run: |
         poetry run pytest -v --tb=short
