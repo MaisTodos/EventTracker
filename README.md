@@ -26,8 +26,7 @@ from event_tracker import EventTracker
 EventTracker.init(
     environment="production",
     sentry_dsn="YOUR_SENTRY_DSN",
-    sentry_traces_sample_rate=1.0,
-    sentry_profiles_sample_rate=1.0,
+    sentry_trace_sample_rate=1.0,
 )
 ```
 
@@ -154,3 +153,11 @@ EventTracker.set_tags({
     "version": "v1.2.3"
 })
 ```
+
+
+## Contribuindo
+
+TODO: Adicionar instruções de contribuição.
+
+TODO: adicionar como setar tags e releases para publicar o esse pacote python.
+

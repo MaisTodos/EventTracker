@@ -10,14 +10,15 @@ class EventTracker:
     # TODO: add a event_handler rate
 
     @classmethod
-    def init_sentry(
+    def init(
         cls,
-        sentry_dsn: str,
         environment: str,
-        tracing_sample_rate: float = 0,
+        sentry_dsn: str,        
+        sentry_trace_sample_rate: float = 0,
     ):
         """
-        Initialize Sentry SDK for error tracking and performance monitoring.
+
+        initialize EventTracker.
 
         Tracing is used to measure the performance of request and used to identify bottlenecks in the application.
         However, it can generate a large volume of data and may incur additional costs depending on the Sentry plan.
@@ -29,12 +30,15 @@ class EventTracker:
             Higher sample rates will result in more data being sent to Sentry, which may impact your usage limits and costs.
 
         Args:
-            sentry_dsn: Sentry Data Source Name (DSN) for project
             environment: Deployment environment
-            tracing_sample_rate: Sampling rate for tracing (0 to disable, 0.5 to half, 1 to all)
+            sentry_dsn: Sentry Data Source Name (DSN) for project
+            sentry_trace_sample_rate: Sampling rate for tracing (0 to disable, 0.5 to half, 1 to all)
         """
 
         # TODO: open-telemetry integration
+
+
+        # Sentry Config
 
         # Set sentry to not capture error logs as issues
         sentry_logging_integration = LoggingIntegration(
@@ -43,11 +47,11 @@ class EventTracker:
         )
 
         # Set tracing_sample_rate
-        tracing_config = (
+        sentry_tracing_config = (
             {"enable_tracing": False}
-            if tracing_sample_rate == 0
+            if sentry_trace_sample_rate == 0
             else {
-                "traces_sample_rate": tracing_sample_rate,
+                "traces_sample_rate": sentry_trace_sample_rate,
                 "enable_tracing": True,
             }
         )
@@ -56,7 +60,7 @@ class EventTracker:
             dsn=sentry_dsn,
             environment=environment,
             integrations=[sentry_logging_integration],
-            **tracing_config,
+            **sentry_tracing_config,
         )
 
     @staticmethod
