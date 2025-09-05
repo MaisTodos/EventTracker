@@ -13,7 +13,7 @@ class EventTracker:
     def init(
         cls,
         environment: str,
-        sentry_dsn: str,        
+        sentry_dsn: str,
         sentry_trace_sample_rate: float = 0,
     ):
         """
@@ -36,7 +36,6 @@ class EventTracker:
         """
 
         # TODO: open-telemetry integration
-
 
         # Sentry Config
 
