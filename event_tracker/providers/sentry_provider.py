@@ -1,10 +1,11 @@
 import logging
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Union
 
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
+from ..messages import Context, Tags
 from ..provider_strategy import IProviderConfig, IProviderStrategy
 
 
@@ -28,10 +29,16 @@ class SentryProvider(IProviderStrategy):
             integrations=[sentry_logging_integration],
             environment=config.environment,
             traces_sample_rate=config.traces_sample_rate,
-            enable_tracing=config.traces_sample_rate is not None and config.traces_sample_rate > 0,
+            enable_tracing=config.traces_sample_rate is not None
+            and config.traces_sample_rate > 0,
         )
 
-    def track(self, event, tags = None, context = None):
+    def track(
+        self,
+        event: Union[str, Exception],
+        tags: Optional[Tags] = None,
+        context: Optional[Context] = None,
+    ):
         if tags:
             self.set_tags(tags)
 
@@ -43,10 +50,10 @@ class SentryProvider(IProviderStrategy):
         else:
             sentry_sdk.capture_message(event)
 
-    def set_tags(self, tags):
+    def set_tags(self, tags: Tags):
         for key, value in tags.items():
             sentry_sdk.set_tag(key, value)
 
-    def set_contexts(self, context):
+    def set_contexts(self, context: Context):
         for key, value in context.items():
             sentry_sdk.set_context(key, value)
