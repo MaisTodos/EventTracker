@@ -30,7 +30,7 @@ def test_event_tracker_emit_when_one_provider_exists():
     mock.track.assert_called_once_with(
         event=message,
         tags=tags,
-        context=contexts,
+        contexts=contexts,
     )
 
 
@@ -53,11 +53,11 @@ def test_event_tracker_emit_when_multiple_providers_exist():
     mock1.track.assert_called_once_with(
         event=message,
         tags=tags,
-        context=contexts,
+        contexts=contexts,
     )
 
     mock2.track.assert_called_once_with(
         event=message,
         tags=tags,
-        context=contexts,
+        contexts=contexts,
     )

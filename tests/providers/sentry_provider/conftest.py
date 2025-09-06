@@ -41,5 +41,5 @@ def init_sentry_mock():
 
 
 @pytest.fixture()
-def sentry_provider(init_sentry_mock):
+def sentry_provider(init_sentry_mock) -> SentryProvider:
     return SentryProvider(SentryConfig(dsn="test_dsn", environment="test_env"))

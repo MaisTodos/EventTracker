@@ -41,7 +41,7 @@ def test_track_when_all_infos(
     sentry_provider.track(
         "test_message",
         tags={"user": "john.doe"},
-        context={"request": {"id": "1234"}},
+        contexts={"request": {"id": "1234"}},
     )
 
     capture_message_mock.assert_called_once_with("test_message")

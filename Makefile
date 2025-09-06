@@ -1,5 +1,5 @@
 test:
-	poetry run pytest -vs
+	poetry run pytest -svv --showlocals
 
 isort:
 	poetry run isort .

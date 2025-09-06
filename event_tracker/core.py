@@ -18,5 +18,5 @@ class EventTracker:
             provider.track(
                 event=event_message.message,
                 tags=event_message.tags,
-                context=event_message.contexts,
+                contexts=event_message.contexts,
             )

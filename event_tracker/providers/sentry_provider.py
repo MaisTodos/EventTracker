@@ -5,7 +5,7 @@ from typing import Optional, Union
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from ..messages import Context, Tags
+from ..messages import Contexts, Tags
 from ..provider_strategy import IProviderConfig, IProviderStrategy
 
 
@@ -37,13 +37,13 @@ class SentryProvider(IProviderStrategy):
         self,
         event: Union[str, Exception],
         tags: Optional[Tags] = None,
-        context: Optional[Context] = None,
+        contexts: Optional[Contexts] = None,
     ):
         if tags:
             self.set_tags(tags)
 
-        if context:
-            self.set_contexts(context)
+        if contexts:
+            self.set_contexts(contexts)
 
         if isinstance(event, Exception):
             sentry_sdk.capture_exception(event)
@@ -54,6 +54,6 @@ class SentryProvider(IProviderStrategy):
         for key, value in tags.items():
             sentry_sdk.set_tag(key, value)
 
-    def set_contexts(self, context: Context):
+    def set_contexts(self, context: Contexts):
         for key, value in context.items():
             sentry_sdk.set_context(key, value)
