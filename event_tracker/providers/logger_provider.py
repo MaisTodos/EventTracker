@@ -54,4 +54,3 @@ class LoggerProvider(IProviderStrategy):
             self.__logger.error(repr(event), exc_info=event, extra=extra)
         else:
             self.__logger.info(event, extra=extra)
-        

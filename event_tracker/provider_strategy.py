@@ -12,7 +12,12 @@ class IProviderStrategy(ABC):
     def __init__(self, config: IProviderConfig): ...
 
     @abstractmethod
-    def track(cls, event: Union[str, Exception], tags: Optional[Tags], contexts: Optional[Contexts]): ...
+    def track(
+        cls,
+        event: Union[str, Exception],
+        tags: Optional[Tags],
+        contexts: Optional[Contexts],
+    ): ...
 
     @abstractmethod
     def set_tags(cls, tags: Tags): ...

@@ -1,5 +1,6 @@
 import io
 import logging
+
 import pytest
 
 from event_tracker.providers.logger_provider import (
