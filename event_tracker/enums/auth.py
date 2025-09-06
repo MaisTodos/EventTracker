@@ -1,9 +1,0 @@
-from enum import Enum
-
-
-class AuthStatus(Enum):
-    SUCCESS = "SUCCESS"
-    FAILURE = "FAILURE"
-    UNAUTHORIZED = "UNAUTHORIZED"
-    FORBIDDEN = "FORBIDDEN"
-    TOKEN_EXPIRED = "TOKEN_EXPIRED"

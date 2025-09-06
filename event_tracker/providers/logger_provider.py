@@ -1,0 +1,6 @@
+from ..provider_strategy import IProviderConfig, IProviderStrategy
+
+
+class LoggerConfig(IProviderConfig): ...
+
+class LoggerProvider(IProviderStrategy): ...
