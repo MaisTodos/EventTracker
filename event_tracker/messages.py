@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional, Union
 
-Primitive = Union[str | int | float | bool | None]
+Primitive = Union[str, int, float, bool, None]
 Tags = Dict[str, Primitive]
 Context = Dict[str, Dict[str, Union[Primitive, List, Dict]]]
 
