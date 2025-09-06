@@ -10,7 +10,7 @@ _logger_contexts = ContextVar("logger_contexts", default={})
 
 
 class LoggerConfig(IProviderConfig):
-    logger_formatter = None
+    logger_handler: Optional[logging.Handler] = None
 
 
 class LoggerProvider(IProviderStrategy):
@@ -18,12 +18,17 @@ class LoggerProvider(IProviderStrategy):
     def __init__(self, config: LoggerConfig):
         self.__logger = logging.getLogger("EventTracker")
 
-        # TODO: avoid adding multiple handlers if multiple instances are created
+        if not len(self.__logger.handlers):
+            # Avoid adding multiple handlers
+            return
 
-        # handler = logging.StreamHandler()
-        # if config.logger_formatter:
-        #     handler.setFormatter(config.logger_formatter)
-        # self.__logger.addHandler(handler)
+        self.__logger.propagate = False
+
+        if config.logger_handler:
+            self.__logger.addHandler(config.logger_handler)
+        else:
+            handler = logging.StreamHandler()
+            self.__logger.addHandler(handler)
 
     def set_tags(self, tags: Tags):
         temp_logger_tags = _logger_tags.get().copy()
