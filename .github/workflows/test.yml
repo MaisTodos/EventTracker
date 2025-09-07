@@ -60,5 +60,5 @@ jobs:
 
     - name: Mutation testing
       run: |
+        set -e
         poetry run mutmut run
-        poetry run mutmut results
