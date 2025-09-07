@@ -33,7 +33,9 @@ class EventTracker:
 
             if not providers:
                 logger.warning(f"No valid providers found for message '{message_name}'")
-                self.__providers_by_message_name[message_name] = providers
+                continue
+
+            self.__providers_by_message_name[message_name] = providers
 
     def set_tags(self, tags: Tags, providers_names: Optional[List[str]] = None):
         providers: List[IProviderStrategy] = []
