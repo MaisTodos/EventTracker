@@ -1,5 +1,6 @@
 import logging
 from contextvars import ContextVar
+from dataclasses import dataclass
 from typing import Optional, Union
 
 from ..messages import Contexts, Tags
@@ -9,6 +10,7 @@ _logger_tags = ContextVar("logger_tags", default={})
 _logger_contexts = ContextVar("logger_contexts", default={})
 
 
+@dataclass
 class LoggerConfig(IProviderConfig):
     logger_handler: Optional[logging.Handler] = None
 

@@ -10,6 +10,16 @@ def create_mock_strategy(name):
     return mock
 
 
+def test_event_tracker_init_with_no_strategy_messages():
+    tracker = EventTracker(
+        [], strategies_by_message={"some_event": ["nonexistent_provider"]}
+    )
+    event_message = EventTrackerMessage(message="Test event")
+
+    # This should not raise any exceptions
+    tracker.emit(event_message)
+
+
 def test_event_tracker_emit_without_providers():
     tracker = EventTracker([])
     event_message = EventTrackerMessage(message="Test event")
