@@ -4,7 +4,7 @@ from event_tracker.core import EventTracker
 from event_tracker.messages import DefaultEvent
 
 
-def create_mock_strategy(name):
+def create_mock_strategy(name: str) -> Mock:
     mock = Mock()
     mock.name = name
     return mock
@@ -12,7 +12,12 @@ def create_mock_strategy(name):
 
 def test_event_tracker_init_with_no_strategy_messages():
     tracker = EventTracker(
-        [], strategies_by_message={"some_event": ["nonexistent_provider"]}
+        [],
+        strategies_by_message={
+            "some_event": ["nonexistent_provider"],
+            "another_event": ["another_nonexistent_provider"],
+            "bad_event": [],
+        },
     )
     event_message = DefaultEvent(message="Test event")
 
@@ -121,7 +126,7 @@ def test_event_tracker_emit_with_providers_names():
     event_message = DefaultEvent(
         message=message,
     )
-    tracker.emit(event_message, strategies_names=[mock_strategy_one.name])
+    tracker.emit(event_message, strategies_names=["fake", mock_strategy_one.name])
 
     mock_strategy_one.track.assert_called_once_with(
         event=message,
@@ -164,7 +169,10 @@ def test_event_tracker_emit_when_strategy_by_message():
 
     tracker = EventTracker(
         [mock_strategy, mock_strategy_message],
-        strategies_by_message={"default_event": [mock_strategy_message.name]},
+        strategies_by_message={
+            "not_value_event": ["not_used_provider"],
+            "default_event": [mock_strategy_message.name],
+        },
     )
 
     event_message = DefaultEvent(message=message)

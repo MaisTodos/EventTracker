@@ -21,7 +21,7 @@ class SentryStrategy(IProviderStrategy):
 
     def __init__(self, config: SentryConfig):
         # Setup Sentry SDK to not capture log error as issues
-        sentry_logging_integration = LoggingIntegration(
+        sentry_logging_integration = LoggingIntegration(  # pragma: no mutate
             level=logging.DEBUG,
             event_level=None,
         )
