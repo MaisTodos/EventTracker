@@ -52,7 +52,8 @@ jobs:
     - name: ISort
       run: |
         poetry run isort --check-only --diff .
-    
-    - name: Tests
+
+    - name: Tests with coverage
       run: |
-        poetry run pytest -v --tb=short
+        poetry run coverage run -m pytest -v --tb=short
+        poetry run coverage report -m --fail-under=100

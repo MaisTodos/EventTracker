@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from .messages import Contexts, EventTrackerMessage, Tags
 from .provider_strategy import IProviderStrategy
@@ -38,19 +38,13 @@ class EventTracker:
             self.__providers_by_message_name[message_name] = providers
 
     def set_tags(self, tags: Tags, providers_names: Optional[List[str]] = None):
-        providers: List[IProviderStrategy] = []
+        providers: Set[IProviderStrategy] = set()
+
         if providers_names:
-            for name in providers_names:
-                provider = self.__providers_by_name.get(name)
-                if not provider:
-                    logger.warning(
-                        f"Provider with name '{name}' not found for setting tags"
-                    )
-                    continue
-                providers.append(provider)
+            providers.update(self.__get_providers_by_names(providers_names))
 
         if not providers:
-            providers = self.__all_providers
+            providers = set(self.__all_providers)
 
         for provider in providers:
             try:
@@ -61,19 +55,13 @@ class EventTracker:
     def set_contexts(
         self, contexts: Contexts, providers_names: Optional[List[str]] = None
     ):
-        providers: List[IProviderStrategy] = []
+        providers: Set[IProviderStrategy] = set()
+
         if providers_names:
-            for name in providers_names:
-                provider = self.__providers_by_name.get(name)
-                if not provider:
-                    logger.warning(
-                        f"Provider with name '{name}' not found for setting contexts"
-                    )
-                    continue
-                providers.append(provider)
+            providers.update(self.__get_providers_by_names(providers_names))
 
         if not providers:
-            providers = self.__all_providers
+            providers = set(self.__all_providers)
 
         for provider in providers:
             try:
@@ -86,22 +74,18 @@ class EventTracker:
         event_message: EventTrackerMessage,
         providers_names: Optional[List[str]] = None,
     ):
-        providers: List[IProviderStrategy] = []
-        if providers_names:
-            for name in providers_names:
-                provider = self.__providers_by_name.get(name)
-                if not provider:
-                    logger.warning(
-                        f"Provider with name '{name}' not found for emitting event"
-                    )
-                    continue
-                providers.append(provider)
+        providers: Set[IProviderStrategy] = set()
 
-        if event_message.name in self.__providers_by_message_name:
-            providers.extend(self.__providers_by_message_name[event_message.name])
+        providers.update(
+            self.__get_providers_by_message_name(event_message.name)
+        )
+
+        if providers_names:
+            providers.update(self.__get_providers_by_names(providers_names))
+
 
         if not providers:
-            providers = self.__all_providers
+            providers = set(self.__all_providers)
 
         for provider in providers:
             try:
@@ -112,3 +96,19 @@ class EventTracker:
                 )
             except Exception as e:
                 logger.error(f"Error tracking event for provider {provider}: {e}")
+
+
+    def __get_providers_by_message_name(self, message_name: str) -> List[IProviderStrategy]:
+        return self.__providers_by_message_name.get(message_name, [])
+
+
+    def __get_providers_by_names(self, names: List[str]) -> List[IProviderStrategy]:
+        providers = []
+        for name in names:
+            provider = self.__providers_by_name.get(name)
+            if not provider:
+                logger.warning(f"Provider with name '{name}' not found")
+                continue
+
+            providers.append(provider)
+        return providers
