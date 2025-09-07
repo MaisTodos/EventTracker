@@ -31,7 +31,7 @@ def test_event_tracker_emit_without_providers():
 def test_event_tracker_emit_when_one_provider():
     message = "test event"
     tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "blah": 123}}
 
     mock_strategy = create_mock_strategy("mock_strategy")
 
@@ -53,7 +53,7 @@ def test_event_tracker_emit_when_one_provider():
 def test_event_tracker_emit_when_multiple_providers():
     message = "test event"
     tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "blah": 123}}
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
@@ -82,7 +82,7 @@ def test_event_tracker_emit_when_multiple_providers():
 def test_event_tracker_emit_when_strategy_raises_exception():
     message = "test event"
     tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "blah": 123}}
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
@@ -249,7 +249,7 @@ def test_event_tracker_set_tags_when_strategy_raises_exception():
 
 
 def test_event_tracker_set_contexts():
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "number": 42}}
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
@@ -262,7 +262,7 @@ def test_event_tracker_set_contexts():
 
 
 def test_event_tracker_set_contexts_with_strategies_names():
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "blah": 123}}
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
@@ -275,7 +275,7 @@ def test_event_tracker_set_contexts_with_strategies_names():
 
 
 def test_event_tracker_set_contexts_when_strategy_raises_exception():
-    contexts = {"context1": {"detail": "info"}}
+    contexts = {"context1": {"detail": "info", "blah": 123}}
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
     mock_strategy_two = create_mock_strategy("mock_strategy_two")

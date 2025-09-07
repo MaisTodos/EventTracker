@@ -12,7 +12,7 @@ from ..provider_strategy import IProviderConfig, IProviderStrategy
 @dataclass
 class SentryConfig(IProviderConfig):
     dsn: str
-    environment: str  # TODO: maybe make this a global config?
+    environment: str
     traces_sample_rate: Optional[float] = None
 
 
