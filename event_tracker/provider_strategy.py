@@ -8,6 +8,10 @@ class IProviderConfig(ABC): ...
 
 
 class IProviderStrategy(ABC):
+    @property
+    @abstractmethod
+    def name(cls) -> str: ...
+
     @abstractmethod
     def __init__(self, config: IProviderConfig): ...
 

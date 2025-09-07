@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from event_tracker.providers.sentry_provider import (
+from event_tracker.strategies.sentry_strategy import (
     SentryConfig,
-    SentryProvider,
+    SentryStrategy,
 )
 
 
@@ -41,5 +41,5 @@ def init_sentry_mock():
 
 
 @pytest.fixture()
-def sentry_provider(init_sentry_mock) -> SentryProvider:
-    return SentryProvider(SentryConfig(dsn="test_dsn", environment="test_env"))
+def sentry_strategy(init_sentry_mock) -> SentryStrategy:
+    return SentryStrategy(SentryConfig(dsn="test_dsn", environment="test_env"))

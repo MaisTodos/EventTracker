@@ -16,7 +16,9 @@ class SentryConfig(IProviderConfig):
     traces_sample_rate: Optional[float] = None
 
 
-class SentryProvider(IProviderStrategy):
+class SentryStrategy(IProviderStrategy):
+    name: str = "sentry"
+
     def __init__(self, config: SentryConfig):
         # Setup Sentry SDK to not capture log error as issues
         sentry_logging_integration = LoggingIntegration(

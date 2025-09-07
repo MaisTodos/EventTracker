@@ -1,11 +1,8 @@
-import io
-import logging
-
 import pytest
 
-from event_tracker.providers.logger_provider import (
+from event_tracker.strategies.logger_strategy import (
     LoggerConfig,
-    LoggerProvider,
+    LoggerStrategy,
     _logger_contexts,
     _logger_tags,
 )
@@ -22,5 +19,5 @@ def reset_logger_contextvars():
 
 
 @pytest.fixture()
-def logger_provider() -> LoggerProvider:
-    return LoggerProvider(LoggerConfig())
+def logger_strategy() -> LoggerStrategy:
+    return LoggerStrategy(LoggerConfig())

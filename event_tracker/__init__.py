@@ -1,20 +1,23 @@
 from .core import EventTracker
-from .messages import EventTrackerMessage
+from .messages import Contexts, EventTrackerMessage, JSONFields, Tags
 from .provider_strategy import IProviderConfig, IProviderStrategy
-from .providers import (
+from .strategies import (
     LoggerConfig,
-    LoggerProvider,
+    LoggerStrategy,
     SentryConfig,
-    SentryProvider,
+    SentryStrategy,
 )
 
 __all__ = [
     "SentryConfig",
-    "SentryProvider",
+    "SentryStrategy",
     "LoggerConfig",
-    "LoggerProvider",
+    "LoggerStrategy",
     "EventTracker",
     "EventTrackerMessage",
     "IProviderConfig",
     "IProviderStrategy",
+    "Tags",
+    "Contexts",
+    "JSONFields",
 ]

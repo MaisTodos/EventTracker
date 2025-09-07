@@ -1,13 +1,13 @@
 import pytest
 
-from event_tracker.providers.sentry_provider import (
+from event_tracker.strategies.sentry_strategy import (
     SentryConfig,
-    SentryProvider,
+    SentryStrategy,
 )
 
 
 def test_sentry_provider_init_with_tracing(init_sentry_mock):
-    SentryProvider(
+    SentryStrategy(
         SentryConfig(
             dsn="blah",
             environment="testing",
@@ -27,7 +27,7 @@ def test_sentry_provider_init_with_tracing(init_sentry_mock):
 
 @pytest.mark.parametrize("traces_sample_rate", [0, -0.1, None])
 def test_sentry_provider_init_without_tracing(traces_sample_rate, init_sentry_mock):
-    SentryProvider(
+    SentryStrategy(
         SentryConfig(
             dsn="blah",
             environment="testing",

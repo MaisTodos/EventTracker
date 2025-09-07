@@ -13,10 +13,11 @@ class LoggerConfig(IProviderConfig):
     logger_handler: Optional[logging.Handler] = None
 
 
-class LoggerProvider(IProviderStrategy):
+class LoggerStrategy(IProviderStrategy):
+    name: str = "logger"
 
     def __init__(self, config: LoggerConfig):
-        self.__logger = logging.getLogger("EventTracker")
+        self.__logger = logging.getLogger("EventTracker.LoggerStrategy")
 
         if not len(self.__logger.handlers):
             # Avoid adding multiple handlers

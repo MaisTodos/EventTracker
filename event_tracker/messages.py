@@ -1,11 +1,14 @@
 from typing import Dict, List, Optional, Union
 
 Primitive = Union[str, int, float, bool, None]
-Tags = Dict[str, Primitive]
-Contexts = Dict[str, Dict[str, Union[Primitive, List, Dict]]]
+JSONFields = Union[Primitive, List["JSONFields"], Dict[str, "JSONFields"]]
+Tags = Dict[str, JSONFields]
+Contexts = Dict[str, Dict[str, JSONFields]]
 
 
 class EventTrackerMessage:
+    name: str = "default_event"
+
     def __init__(
         self,
         message: Union[Exception, str],

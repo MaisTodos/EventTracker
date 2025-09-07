@@ -1,9 +1,9 @@
 import logging
 
 
-def test_track_when_string_event(caplog, logger_provider):
+def test_track_when_string_event(caplog, logger_strategy):
     with caplog.at_level(logging.INFO):
-        logger_provider.track("test_message")
+        logger_strategy.track("test_message")
 
     event_record = caplog.records[0]
     assert event_record.levelname == "INFO"
@@ -12,13 +12,13 @@ def test_track_when_string_event(caplog, logger_provider):
     assert event_record.contexts == {}
 
 
-def test_track_when_exception_event(caplog, logger_provider):
+def test_track_when_exception_event(caplog, logger_strategy):
     with caplog.at_level(logging.INFO):
 
         try:
             _ = 1 / 0
         except Exception as e:
-            logger_provider.track(e)
+            logger_strategy.track(e)
 
     event_record = caplog.records[0]
     assert event_record.levelname == "ERROR"
@@ -29,9 +29,9 @@ def test_track_when_exception_event(caplog, logger_provider):
     assert event_record.exc_info[2] is not None
 
 
-def test_track_when_all_infos(caplog, logger_provider):
+def test_track_when_all_infos(caplog, logger_strategy):
     with caplog.at_level(logging.INFO):
-        logger_provider.track(
+        logger_strategy.track(
             "test_message",
             tags={"user": "john.doe"},
             contexts={"session": {"id": "abcd"}},
@@ -44,12 +44,12 @@ def test_track_when_all_infos(caplog, logger_provider):
     assert event_record.contexts == {"session": {"id": "abcd"}}
 
 
-def test_track_when_already_infos_set_and_new_infos(caplog, logger_provider):
-    logger_provider.set_contexts({"session": {"id": "abcd"}})
-    logger_provider.set_tags({"user": "jane.doe"})
+def test_track_when_already_infos_set_and_new_infos(caplog, logger_strategy):
+    logger_strategy.set_contexts({"session": {"id": "abcd"}})
+    logger_strategy.set_tags({"user": "jane.doe"})
 
     with caplog.at_level(logging.INFO):
-        logger_provider.track(
+        logger_strategy.track(
             "test_message",
             tags={"new": "tag"},
             contexts={"new": {"info": "value"}},

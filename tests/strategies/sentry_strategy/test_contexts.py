@@ -1,8 +1,8 @@
 from unittest.mock import call
 
 
-def test_set_contexts(sentry_provider, set_context_mock):
-    sentry_provider.set_contexts(
+def test_set_contexts(sentry_strategy, set_context_mock):
+    sentry_strategy.set_contexts(
         {
             "user": {"value": "john.doe"},
             "blah": {"bleh": 123},
