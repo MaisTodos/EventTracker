@@ -52,7 +52,9 @@ class EventTracker:
             try:
                 strategy.set_tags(tags)
             except Exception as e:
-                logger.error(f"Error setting tags for strategy {strategy}: {e}")  # pragma: no mutate
+                logger.error(
+                    f"Error setting tags for strategy {strategy}: {e}"
+                )  # pragma: no mutate
 
     def set_contexts(
         self, contexts: Contexts, strategies_names: Optional[List[str]] = None
@@ -69,7 +71,9 @@ class EventTracker:
             try:
                 strategy.set_contexts(contexts)
             except Exception as e:
-                logger.error(f"Error setting contexts for strategy {strategy}: {e}")  # pragma: no mutate
+                logger.error(
+                    f"Error setting contexts for strategy {strategy}: {e}"
+                )  # pragma: no mutate
 
     def emit(
         self,
@@ -94,7 +98,9 @@ class EventTracker:
                     contexts=event_message.contexts,
                 )
             except Exception as e:
-                logger.error(f"Error tracking event for strategy {strategy}: {e}")  # pragma: no mutate
+                logger.error(
+                    f"Error tracking event for strategy {strategy}: {e}"
+                )  # pragma: no mutate
 
     def __get_strategies_by_message_name(
         self, message_name: str
@@ -106,7 +112,9 @@ class EventTracker:
         for name in names:
             strategy = self.__strategy_by_name.get(name)
             if not strategy:
-                logger.warning(f"Strategy with name '{name}' not found")  # pragma: no mutate
+                logger.warning(
+                    f"Strategy with name '{name}' not found"
+                )  # pragma: no mutate
                 continue
 
             strategies.append(strategy)

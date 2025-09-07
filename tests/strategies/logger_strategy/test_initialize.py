@@ -25,7 +25,7 @@ def test_logger_strategy_init_with_config():
 
 
 def test_logger_strategy_init_without_config():
-    
+
     logger = logging.getLogger("EventTracker.LoggerStrategy")
     logger.handlers = []
 
