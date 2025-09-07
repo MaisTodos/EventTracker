@@ -23,8 +23,6 @@ class LoggerStrategy(IProviderStrategy):
             # Avoid adding multiple handlers
             return
 
-        self.__logger.propagate = False
-
         if config.logger_handler:
             self.__logger.addHandler(config.logger_handler)
         else:
