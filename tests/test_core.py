@@ -132,7 +132,7 @@ def test_event_tracker_emit_with_providers_names():
     mock_strategy_two.track.assert_not_called()
 
 
-def test_event_tracker_emit_with_nonexistent_provider_name():
+def test_event_tracker_emit_for_all_providers_when_nonexistent_provider_name():
     message = "test event"
 
     mock_strategy_one = create_mock_strategy("mock_strategy_one")
