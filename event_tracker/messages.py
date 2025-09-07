@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Mapping, Optional, Union
 
 Primitive = Union[str, int, float, bool, None]
 JSONFields = Union[Primitive, List["JSONFields"], Dict[str, "JSONFields"]]
