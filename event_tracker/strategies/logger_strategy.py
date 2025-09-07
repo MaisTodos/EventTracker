@@ -19,7 +19,7 @@ class LoggerStrategy(IProviderStrategy):
     def __init__(self, config: LoggerConfig):
         self.__logger = logging.getLogger("EventTracker.LoggerStrategy")
 
-        if not len(self.__logger.handlers):
+        if len(self.__logger.handlers):
             # Avoid adding multiple handlers
             return
 
