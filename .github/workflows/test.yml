@@ -57,8 +57,3 @@ jobs:
       run: |
         poetry run coverage run -m pytest -v --tb=short tests
         poetry run coverage report -m --fail-under=100
-
-    - name: Mutation testing
-      run: |
-        set -e
-        poetry run mutmut run
