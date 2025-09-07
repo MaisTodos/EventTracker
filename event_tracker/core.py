@@ -76,13 +76,10 @@ class EventTracker:
     ):
         providers: Set[IProviderStrategy] = set()
 
-        providers.update(
-            self.__get_providers_by_message_name(event_message.name)
-        )
+        providers.update(self.__get_providers_by_message_name(event_message.name))
 
         if providers_names:
             providers.update(self.__get_providers_by_names(providers_names))
-
 
         if not providers:
             providers = set(self.__all_providers)
@@ -97,10 +94,10 @@ class EventTracker:
             except Exception as e:
                 logger.error(f"Error tracking event for provider {provider}: {e}")
 
-
-    def __get_providers_by_message_name(self, message_name: str) -> List[IProviderStrategy]:
+    def __get_providers_by_message_name(
+        self, message_name: str
+    ) -> List[IProviderStrategy]:
         return self.__providers_by_message_name.get(message_name, [])
-
 
     def __get_providers_by_names(self, names: List[str]) -> List[IProviderStrategy]:
         providers = []
