@@ -1,5 +1,5 @@
 import logging
-from typing import List, Optional, Set
+from typing import Dict, List, Optional, Set
 
 from .messages import Contexts, EventTrackerMessage, Tags
 from .provider_strategy import IProviderStrategy
@@ -11,7 +11,7 @@ class EventTracker:
     def __init__(
         self,
         strategies: List[IProviderStrategy],
-        strategies_by_message: Optional[dict[str, List[str]]] = None,
+        strategies_by_message: Optional[Dict[str, List[str]]] = None,
     ):
         strategies_by_message = strategies_by_message or {}
 
