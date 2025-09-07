@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
 from event_tracker.core import EventTracker
-from event_tracker.messages import EventTrackerMessage
+from event_tracker.messages import DefaultEvent
 
 
 def create_mock_strategy(name):
@@ -14,7 +14,7 @@ def test_event_tracker_init_with_no_strategy_messages():
     tracker = EventTracker(
         [], strategies_by_message={"some_event": ["nonexistent_provider"]}
     )
-    event_message = EventTrackerMessage(message="Test event")
+    event_message = DefaultEvent(message="Test event")
 
     # This should not raise any exceptions
     tracker.emit(event_message)
@@ -22,7 +22,7 @@ def test_event_tracker_init_with_no_strategy_messages():
 
 def test_event_tracker_emit_without_providers():
     tracker = EventTracker([])
-    event_message = EventTrackerMessage(message="Test event")
+    event_message = DefaultEvent(message="Test event")
 
     # This should not raise any exceptions
     tracker.emit(event_message)
@@ -36,7 +36,7 @@ def test_event_tracker_emit_when_one_provider():
     mock_strategy = create_mock_strategy("mock_strategy")
 
     tracker = EventTracker([mock_strategy])
-    event_message = EventTrackerMessage(
+    event_message = DefaultEvent(
         message=message,
         tags=tags,
         contexts=contexts,
@@ -59,7 +59,7 @@ def test_event_tracker_emit_when_multiple_providers():
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
 
     tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = EventTrackerMessage(
+    event_message = DefaultEvent(
         message=message,
         tags=tags,
         contexts=contexts,
@@ -89,7 +89,7 @@ def test_event_tracker_emit_when_strategy_raises_exception():
     mock_strategy_two.track.side_effect = Exception("Strategy error")
 
     tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = EventTrackerMessage(
+    event_message = DefaultEvent(
         message=message,
         tags=tags,
         contexts=contexts,
@@ -118,7 +118,7 @@ def test_event_tracker_emit_with_providers_names():
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
 
     tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = EventTrackerMessage(
+    event_message = DefaultEvent(
         message=message,
     )
     tracker.emit(event_message, strategies_names=[mock_strategy_one.name])
@@ -139,7 +139,7 @@ def test_event_tracker_emit_for_all_providers_when_nonexistent_provider_name():
     mock_strategy_two = create_mock_strategy("mock_strategy_two")
 
     tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = EventTrackerMessage(
+    event_message = DefaultEvent(
         message=message,
     )
     tracker.emit(event_message, strategies_names=["nonexistent_provider"])
@@ -167,7 +167,7 @@ def test_event_tracker_emit_when_strategy_by_message():
         strategies_by_message={"default_event": [mock_strategy_message.name]},
     )
 
-    event_message = EventTrackerMessage(message=message)
+    event_message = DefaultEvent(message=message)
     tracker.emit(event_message)
 
     mock_strategy.track.assert_not_called()
@@ -190,7 +190,7 @@ def test_event_tracker_emit_when_strategy_by_message_and_names():
         strategies_by_message={"default_event": [mock_strategy_message.name]},
     )
 
-    event_message = EventTrackerMessage(message=message)
+    event_message = DefaultEvent(message=message)
     tracker.emit(event_message, strategies_names=[mock_strategy_one.name])
 
     mock_strategy_one.track.assert_called_once_with(

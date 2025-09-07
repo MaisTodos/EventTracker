@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping, Optional, Union
+from typing import Dict, List, Optional, Union
 
 Primitive = Union[str, int, float, bool, None]
 JSONFields = Union[Primitive, List["JSONFields"], Dict[str, "JSONFields"]]
@@ -6,7 +6,7 @@ Tags = Dict[str, JSONFields]
 Contexts = Dict[str, Dict[str, JSONFields]]
 
 
-class EventTrackerMessage:
+class DefaultEvent:
     name: str = "default_event"
 
     def __init__(

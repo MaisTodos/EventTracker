@@ -1,5 +1,5 @@
 from .core import EventTracker
-from .messages import Contexts, EventTrackerMessage, JSONFields, Tags
+from .messages import Contexts, DefaultEvent, JSONFields, Tags
 from .provider_strategy import IProviderConfig, IProviderStrategy
 from .strategies import (
     LoggerConfig,
@@ -14,7 +14,7 @@ __all__ = [
     "LoggerConfig",
     "LoggerStrategy",
     "EventTracker",
-    "EventTrackerMessage",
+    "DefaultEvent",
     "IProviderConfig",
     "IProviderStrategy",
     "Tags",

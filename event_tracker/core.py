@@ -1,7 +1,7 @@
 import logging
 from typing import Dict, List, Optional, Set
 
-from .messages import Contexts, EventTrackerMessage, Tags
+from .messages import Contexts, DefaultEvent, Tags
 from .provider_strategy import IProviderStrategy
 
 logger = logging.getLogger(__name__)
@@ -73,7 +73,7 @@ class EventTracker:
 
     def emit(
         self,
-        event_message: EventTrackerMessage,
+        event_message: DefaultEvent,
         strategies_names: Optional[List[str]] = None,
     ):
         strategies: Set[IProviderStrategy] = set()
