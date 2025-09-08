@@ -22,6 +22,7 @@ def test_logger_exception_handler_capture(logger_core, caplog):
     assert log_record.levelname == "ERROR"
     assert log_record.message == "ZeroDivisionError"
     assert log_record.exc_info is not None
+    assert log_record.exc_info[0] is ZeroDivisionError
     assert log_record.exc_info[2] is not None
     assert log_record.tags == {"global_tag": "global_value"}
     assert log_record.contexts == {"global_context": "global_value"}

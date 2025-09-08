@@ -45,23 +45,23 @@ class Tracker:
             except Exception as e:
                 logger.error(f"Error setting contexts for handler {handler}: {e}")
 
-    def emit_exception(self, event: TrackerException):
+    def emit_exception(self, tracker_exception: TrackerException):
         for handler in self.__exception_handlers:
             try:
-                handler.capture_exception(event)
+                handler.capture_exception(tracker_exception)
             except Exception as e:
                 logger.error(f"Error emitting exception for handler {handler}: {e}")
 
-    def emit_message(self, message: TrackerMessage):
+    def emit_message(self, tracker_message: TrackerMessage):
         for handler in self.__message_handlers:
             try:
-                handler.capture_message(message)
+                handler.capture_message(tracker_message)
             except Exception as e:
                 logger.error(f"Error emitting message for handler {handler}: {e}")
 
-    def emit_event(self, event: TrackerEvent):
+    def emit_event(self, tracker_event: TrackerEvent):
         for handler in self.__event_handlers:
             try:
-                handler.capture_event(event)
+                handler.capture_event(tracker_event)
             except Exception as e:
                 logger.error(f"Error emitting event for handler {handler}: {e}")

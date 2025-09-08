@@ -15,8 +15,8 @@ class TrackerException:
 @dataclass
 class TrackerEvent:
     event: Enum
-    tags: Optional[Tags]
-    contexts: Optional[Contexts]
+    tags: Optional[Tags] = None
+    contexts: Optional[Contexts] = None
 
 
 @dataclass
