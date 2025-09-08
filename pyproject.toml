@@ -1,5 +1,5 @@
 [project]
-name = "event_tracker"
+name = "tracker"
 version = "0.1.0"
 description = ""
 authors = [
@@ -7,7 +7,7 @@ authors = [
     {name = "Johnathan Barbosa de Araujo", email = "johnathan.araujo@maistodos.com.br"}
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<4.0"
 dependencies = [
     "sentry-sdk (>=2.35.2,<3.0.0)"
 ]
@@ -22,4 +22,18 @@ ipdb = "^0.13.13"
 pytest = "^8.4.1"
 black = "^25.1.0"
 isort = "^6.0.1"
+coverage = "^7.10.6"
+mutmut = "^3.3.1"
 
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+]
+
+[tool.mutmut]
+paths_to_mutate = ["tracker/"]
+tests_dir = ["tests/"]

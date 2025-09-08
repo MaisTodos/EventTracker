@@ -1,37 +1,43 @@
-from unittest.mock import MagicMock, patch
+from enum import Enum
+from unittest.mock import Mock
 
 import pytest
 
-
-@pytest.fixture()
-def set_tag_mock():
-    with patch("sentry_sdk.set_tag", new_callable=MagicMock) as set_tag_mock:
-        yield set_tag_mock
+from tracker import TrackerEvent, TrackerException, TrackerMessage
 
 
-@pytest.fixture()
-def set_context_mock():
-    with patch("sentry_sdk.set_context", new_callable=MagicMock) as set_context_mock:
-        yield set_context_mock
+class TestEnum(Enum):
+    TEST_EVENT = "test_event"
+    ANOTHER_TEST_EVENT = "another_test_event"
+    TEST_MESSAGE = "test_message"
+    ANOTHER_TEST_MESSAGE = "another_test_message"
 
 
 @pytest.fixture()
-def set_capture_message_mock():
-    with patch(
-        "sentry_sdk.capture_message", new_callable=MagicMock
-    ) as set_context_mock:
-        yield set_context_mock
+def tracker_event():
+    return TrackerEvent(event=TestEnum.TEST_EVENT, tags=None, contexts=None)
 
 
 @pytest.fixture()
-def set_capture_exception_mock():
-    with patch(
-        "sentry_sdk.capture_exception", new_callable=MagicMock
-    ) as set_capture_exception_mock:
-        yield set_capture_exception_mock
+def tracker_exception():
+    return TrackerException(
+        exception=Exception("Test Exception"), tags=None, contexts=None
+    )
 
 
 @pytest.fixture()
-def set_init_sentry_mock():
-    with patch("sentry_sdk.init", new_callable=MagicMock) as set_init_sentry_mock:
-        yield set_init_sentry_mock
+def tracker_message():
+    return TrackerMessage(message=TestEnum.TEST_MESSAGE, tags=None, contexts=None)
+
+
+@pytest.fixture()
+def handlers_mocks():
+    event_handlers = [Mock(), Mock()]
+    message_handlers = [Mock(), Mock()]
+    exception_handlers = [Mock(), Mock()]
+
+    return {
+        "event_handlers": event_handlers,
+        "message_handlers": message_handlers,
+        "exception_handlers": exception_handlers,
+    }

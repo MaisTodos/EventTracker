@@ -1,7 +1,6 @@
 # EventTracker
 
-Uma biblioteca simples para rastreamento de eventos.
-Atualmente integrada com Sentry, mas projetada para ser extensível a outros provedores.
+Uma biblioteca modular e extensível para rastreamento de eventos, mensagens e exceções.
 
 ## Instalação
 
@@ -9,136 +8,137 @@ Atualmente integrada com Sentry, mas projetada para ser extensível a outros pro
 Hoje a biblioteca não está publicada no PyPI e não pretendemos publicar tão cedo.
 Por enquanto, você pode fazer referência pelo repositório GitHub:
 
-
 #### Exemplo utilizando Poetry:
 ```bash
 poetry add git+https://github.com/MaisTodos/EventTracker.git
 ```
 
-
 ## Configuração Inicial
 
-```python
-from event_tracker import EventTracker
+A biblioteca agora utiliza uma arquitetura baseada em handlers, permitindo configurar múltiplos provedores simultaneamente.
 
-# A inicialização só precisa e deve ser feita uma vez, ao inicio da aplicação.
-# Funciona como singleton.
-EventTracker.init(
-    environment="production",
-    sentry_dsn="YOUR_SENTRY_DSN",
-    sentry_trace_sample_rate=1.0,
+### Configuração
+
+```python
+from tracker import (
+    Tracker,
+    SentryCore,
+    SentryExceptionHandler,
+    SentryMessageHandler,
+    LoggerCore,
+    LoggerExceptionHandler,
+    LoggerMessageHandler,
+)
+
+sentry_core = SentryCore(
+    SentryCore.SentryConfig(
+        dsn="YOUR_SENTRY_DSN",
+        environment="production",
+        trace_sample_rate=1.0,
+    )
+)
+sentry_exception_handler = SentryExceptionHandler(sentry_core)
+sentry_message_handler = SentryMessageHandler(sentry_core)
+
+logger_core = LoggerCore(LoggerCore.LoggerConfig())
+logger_exception_handler = LoggerExceptionHandler(logger_core)
+logger_message_handler = LoggerMessageHandler(logger_core)
+
+tracker = Tracker(
+    exception_handlers=[sentry_exception_handler, logger_exception_handler],
+    message_handlers=[sentry_message_handler, logger_message_handler],
 )
 ```
 
 ## Uso
 
-É interessante que a aplicação defina enums para os eventos, tags e contextos que serão utilizados.
-É uma boa prática para manter o código limpo, mas principalmente de evitar erros de digitação.
+O Tracker é orientado a tipos à dados a emitir: exceções, mensagens e eventos. Para mensagens e eventos, é necessário definir enums.
 
-
-### Rastreamento de Erros
+### Rastreamento de Exceções
 
 ```python
-from event_tracker import EventTracker
+from tracker import TrackerException
+from enum import Enum
 
+class ErrorTags(Enum):
+    CRITICAL = "critical"
+    WARNING = "warning"
 
 try:
     1 / 0
 except ZeroDivisionError as error:
-    EventTracker.track(error)
+    tracker.emit_exception(
+        TrackerException(
+            exception=error,
+            tags={"severity": ErrorTags.CRITICAL.value},
+            contexts={
+                "operation": {
+                    "type": "division",
+                    "operands": [1, 0]
+                }
+            }
+        )
+    )
 ```
 
-### Enviando eventos
+### Enviando Mensagens
 
 ```python
-from event_tracker import EventTracker
-
-# Enviando evento com Enum
-EventTracker.track("user_action")
-```
-
-### Enums
-
-```python
-from event_tracker import EventTracker
+from tracker import TrackerMessage
 from enum import Enum
 
-class UserEvents(Enum):
-    LOGIN = "user_login"
-    LOGOUT = "user_logout"
-    REGISTRATION = "user_registration"
-    PASSWORD_RESET = "user_password_reset"
+class CheckoutEvents(Enum):
+    CHECKOUT_SUCCESS = "checkout_success"
 
-class UserType(Enum):
-    ADMIN = "admin"
-    REGULAR = "regular"
-    PREMIUM = "premium"
-
-EventTracker.track(UserEvents.LOGIN)
-EventTracker.track(UserEvents.LOGIN.value)
-```
-
-### Tags
-
-As tags são pares chave-valor simples, geralmente utilizadas para filtrar e indexar eventos.
-As chaves precisam ser Enums ou strings, e os valores precisam ser qualquer tipo primitivo(String's, Inteiros, Floats ou Booleanos).
-
-
-```python
-from event_tracker import EventTracker
-
-EventTracker.track(
-    UserEvents.LOGIN,
-    tags={
-        "user_type": UserType.ADMIN,
-        "source": "web_app" 
-    }
-)
-```
-
-### Contextos
-
-Os contextos são dados estruturados, geralmente utilizados para fornecer mais detalhes sobre o evento.
-Eles são enviados como dicionários aninhados, mas ao final, os valores precisam ser tipos primitivos.
-
-
-```python
-from event_tracker import EventTracker
-
-EventTracker.track(
-    UserEvents.LOGIN,
-    context={
+message = TrackerMessage(
+    message=CheckoutEvents.CHECKOUT_SUCCESS,
+    tags={"partner": "premium"},
+    contexts={
         "user_info": {
             "id": "12345",
             "email": "usuario@exemplo.com",
-            "subscription": UserType.PREMIUM.value
-        },
-        "session": {
-            "ip": "192.168.1.1",
-            "user_agent": "Mozilla/5.0...",
-            "session_duration": 3600
-        },
-        "feature_flags": {
-            "new_dashboard": True,
-            "beta_features": False
+            "value": 250.75
         }
     }
 )
+tracker.emit_message(message)
 ```
 
+### Enviando Eventos
+
+```python
+from tracker import TrackerEvent
+from enum import Enum
+
+class SystemEvents(Enum):
+    STARTUP = "system_startup"
+    SHUTDOWN = "system_shutdown"
+    HEALTH_CHECK = "health_check"
+
+# Evento do sistema
+event = TrackerEvent(
+    event=SystemEvents.STARTUP,
+    tags={"version": "1.0.0"},
+)
+tracker.emit_event(event)
+```
 
 ## Configurando Tags e Contextos Globais
 
-É possivel que a aplicação defina tags e contextos que serão enviados em todos os eventos.
-É interessante para informações que não mudam com frequência, como versão da aplicação, ambiente, etc.
-Um cenário comum é definir informações da requisição atual, como ID do usuário, IP, User-Agent, assim que a requisição é recebida.
-
+O tracker permite configurar tags e contextos que serão aplicados automaticamente a todos os eventos, mensagens e exceções enviados pelos handlers.
 
 ```python
-EventTracker.set_contexts({
+# Configurar tags globais
+tracker.set_tags({
+    "service": "user-service",
+    "version": "v1.2.3",
+    "environment": "production"
+})
+
+# Configurar contextos globais
+tracker.set_contexts({
     "app_info": {
         "version": "1.2.3",
-        "environment": Environment.PRODUCTION.value,
         "build_number": "456"
     },
     "server": {
@@ -146,18 +146,107 @@ EventTracker.set_contexts({
         "instance_id": "i-1234567890abcdef0"
     }
 })
-
-EventTracker.set_tags({
-    "service": "user-service",
-    "cloud_provider": "aws",
-    "version": "v1.2.3"
-})
 ```
 
 
+### Exemplo Completo
+
+```python
+from tracker import (
+    Tracker, TrackerMessage, TrackerException, TrackerEvent,
+    SentryCore, SentryExceptionHandler, SentryMessageHandler,
+    LoggerCore, LoggerExceptionHandler, LoggerMessageHandler,
+)
+from enum import Enum
+
+# Definir enums
+class UserEvents(Enum):
+    LOGIN = "user_login"
+    LOGOUT = "user_logout"
+
+class UserType(Enum):
+    ADMIN = "admin"
+    REGULAR = "regular"
+
+# Configurar provedores
+sentry_core = SentryCore(SentryCore.SentryConfig(dsn="YOUR_DSN"))
+logger_core = LoggerCore(LoggerCore.LoggerConfig())
+
+# Criar tracker
+tracker = Tracker(
+    message_handlers=[
+        SentryMessageHandler(sentry_core),
+        LoggerMessageHandler(logger_core),
+    ],
+    exception_handlers=[
+        SentryExceptionHandler(sentry_core),
+        LoggerExceptionHandler(logger_core),
+    ]
+)
+
+# Configurar dados globais
+tracker.set_tags({"service": "auth-service"})
+tracker.set_contexts({
+    "app": {"version": "1.0.0"}
+})
+
+# Usar o tracker
+try:
+    # Simular login
+    message = TrackerMessage(
+        message=UserEvents.LOGIN,
+        tags={"user_type": UserType.ADMIN.value},
+        contexts={
+            "user": {"id": "123", "email": "admin@example.com"}
+        }
+    )
+    tracker.emit_message(message)
+    
+    # Simular erro
+    raise ValueError("Erro de exemplo")
+    
+except ValueError as e:
+    exception = TrackerException(
+        exception=e,
+        tags={"severity": "medium"},
+        contexts={"operation": {"type": "authentication"}}
+    )
+    tracker.emit_exception(exception)
+```
+
+## Contribuição e Desenvolvimento
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+make test
+
+# Executar com cobertura
+make coverage
+
+# Testes de mutação
+make mutation
+```
+
+### Formatação e Linting
+
+```bash
+# Formatação automática
+make black
+make isort
+```
+
 ## Contribuindo
 
-TODO: Adicionar instruções de contribuição.
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
 
-TODO: adicionar como setar tags e releases para publicar o esse pacote python.
+### Diretrizes
 
+- Mantenha a cobertura de testes acima de 100%
+- Mantenha testes de mutação em 100%
+- Siga as convenções de código (Black + isort)
