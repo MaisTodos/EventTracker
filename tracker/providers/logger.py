@@ -85,7 +85,8 @@ class LoggerExceptionHandler(ITrackerHandlerException):
         if tracker_exception.contexts:
             extra["contexts"].update(tracker_exception.contexts)
 
-        self.core.logger.exception(
+        self.core.logger.error(
             tracker_exception.exception.__class__.__name__,
+            exc_info=tracker_exception.exception,
             extra=extra,
         )
