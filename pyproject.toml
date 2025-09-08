@@ -1,5 +1,5 @@
 [project]
-name = "event_tracker"
+name = "tracker"
 version = "0.1.0"
 description = ""
 authors = [
@@ -29,6 +29,11 @@ mutmut = "^3.3.1"
 multi_line_output = 3
 include_trailing_comma = true
 
+[tool.coverage.run]
+omit = [
+    "tests/*",
+]
+
 [tool.mutmut]
-paths_to_mutate = ["event_tracker/"]
+paths_to_mutate = ["tracker/"]
 tests_dir = ["tests/"]

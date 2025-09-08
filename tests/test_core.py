@@ -1,298 +1,240 @@
-from unittest.mock import Mock
+import logging
 
-from event_tracker.core import EventTracker
-from event_tracker.messages import DefaultEvent
-
-
-def create_mock_strategy(name: str) -> Mock:
-    mock = Mock()
-    mock.name = name
-    return mock
+from tracker.core import Tracker
 
 
-def test_event_tracker_init_with_no_strategy_messages():
-    tracker = EventTracker(
-        [],
-        strategies_by_message={
-            "some_event": ["nonexistent_provider"],
-            "another_event": ["another_nonexistent_provider"],
-            "bad_event": [],
-        },
-    )
-    event_message = DefaultEvent(message="Test event")
-
-    # This should not raise any exceptions
-    tracker.emit(event_message)
+def test_tracker_emit_without_handlers(
+    tracker_message, tracker_exception, tracker_event
+):
+    tracker = Tracker()
+    tracker.emit_event(tracker_event)
+    tracker.emit_message(tracker_message)
+    tracker.emit_exception(tracker_exception)
 
 
-def test_event_tracker_emit_without_providers():
-    tracker = EventTracker([])
-    event_message = DefaultEvent(message="Test event")
-
-    # This should not raise any exceptions
-    tracker.emit(event_message)
+def test_tracker_set_tags_without_handlers():
+    tracker = Tracker()
+    tracker.set_tags({"key": "value"})
 
 
-def test_event_tracker_emit_when_one_provider():
-    message = "test event"
-    tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info", "blah": 123}}
+def test_tracker_set_contexts_without_handlers():
+    tracker = Tracker()
+    tracker.set_contexts({"context": {"detail": "info"}})
 
-    mock_strategy = create_mock_strategy("mock_strategy")
 
-    tracker = EventTracker([mock_strategy])
-    event_message = DefaultEvent(
-        message=message,
-        tags=tags,
-        contexts=contexts,
-    )
-    tracker.emit(event_message)
+def test_tracker_emit_message(tracker_message, handlers_mocks):
+    message_handler_one = handlers_mocks["message_handlers"][0]
+    message_handler_two = handlers_mocks["message_handlers"][1]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+    event_handler = handlers_mocks["event_handlers"][0]
 
-    mock_strategy.track.assert_called_once_with(
-        event=message,
-        tags=tags,
-        contexts=contexts,
+    tracker = Tracker(
+        message_handlers=[message_handler_one, message_handler_two],
+        exception_handlers=[exception_handler],
+        event_handlers=[event_handler],
     )
 
+    tracker.emit_message(tracker_message)
 
-def test_event_tracker_emit_when_multiple_providers():
-    message = "test event"
-    tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info", "blah": 123}}
+    message_handler_one.capture_message.assert_called_once_with(tracker_message)
+    message_handler_two.capture_message.assert_called_once_with(tracker_message)
+    exception_handler.capture_exception.assert_not_called()
+    event_handler.capture_event.assert_not_called()
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = DefaultEvent(
-        message=message,
-        tags=tags,
-        contexts=contexts,
-    )
-    tracker.emit(event_message)
+def test_tracker_emit_exception(tracker_exception, handlers_mocks):
+    exception_handler_one = handlers_mocks["exception_handlers"][0]
+    exception_handler_two = handlers_mocks["exception_handlers"][1]
+    event_handler = handlers_mocks["event_handlers"][0]
+    message_handler = handlers_mocks["message_handlers"][0]
 
-    mock_strategy_one.track.assert_called_once_with(
-        event=message,
-        tags=tags,
-        contexts=contexts,
+    tracker = Tracker(
+        message_handlers=[message_handler],
+        event_handlers=[event_handler],
+        exception_handlers=[exception_handler_one, exception_handler_two],
     )
 
-    mock_strategy_two.track.assert_called_once_with(
-        event=message,
-        tags=tags,
-        contexts=contexts,
+    tracker.emit_exception(tracker_exception)
+
+    exception_handler_one.capture_exception.assert_called_once_with(tracker_exception)
+    exception_handler_two.capture_exception.assert_called_once_with(tracker_exception)
+    event_handler.capture_event.assert_not_called()
+    message_handler.capture_message.assert_not_called()
+
+
+def test_tracker_emit_event(tracker_event, handlers_mocks):
+    event_handler_one = handlers_mocks["event_handlers"][0]
+    event_handler_two = handlers_mocks["event_handlers"][1]
+    message_handler = handlers_mocks["message_handlers"][0]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+
+    tracker = Tracker(
+        event_handlers=[event_handler_one, event_handler_two],
+        message_handlers=[message_handler],
+        exception_handlers=[exception_handler],
     )
 
+    tracker.emit_event(tracker_event)
 
-def test_event_tracker_emit_when_strategy_raises_exception():
-    message = "test event"
-    tags = {"key1": "value1", "key2": 123}
-    contexts = {"context1": {"detail": "info", "blah": 123}}
+    event_handler_one.capture_event.assert_called_once_with(tracker_event)
+    event_handler_two.capture_event.assert_called_once_with(tracker_event)
+    message_handler.capture_message.assert_not_called()
+    exception_handler.capture_exception.assert_not_called()
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-    mock_strategy_two.track.side_effect = Exception("Strategy error")
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = DefaultEvent(
-        message=message,
-        tags=tags,
-        contexts=contexts,
-    )
+def test_tracker_emit_message_when_handler_raises(
+    tracker_message, handlers_mocks, caplog
+):
+    message_handler_one = handlers_mocks["message_handlers"][0]
+    message_handler_two = handlers_mocks["message_handlers"][1]
+    message_handler_one.capture_message.side_effect = Exception("Handler Error")
 
-    # This should not raise any exceptions despite one strategy failing
-    tracker.emit(event_message)
+    tracker = Tracker(message_handlers=[message_handler_one, message_handler_two])
 
-    mock_strategy_one.track.assert_called_once_with(
-        event=message,
-        tags=tags,
-        contexts=contexts,
-    )
+    with caplog.at_level(logging.ERROR):
+        tracker.emit_message(tracker_message)
 
-    mock_strategy_two.track.assert_called_once_with(
-        event=message,
-        tags=tags,
-        contexts=contexts,
+    message_handler_one.capture_message.assert_called_once_with(tracker_message)
+    message_handler_two.capture_message.assert_called_once_with(tracker_message)
+
+    log_record = caplog.records[0]
+    assert (
+        log_record.message
+        == f"Error emitting message for handler {message_handler_one}: Handler Error"
     )
 
 
-def test_event_tracker_emit_with_providers_names():
-    message = "test event"
+def test_tracker_emit_exception_when_handler_raises(
+    tracker_exception, handlers_mocks, caplog
+):
+    exception_handler_one = handlers_mocks["exception_handlers"][0]
+    exception_handler_two = handlers_mocks["exception_handlers"][1]
+    exception_handler_one.capture_exception.side_effect = Exception("Handler Error")
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
+    tracker = Tracker(exception_handlers=[exception_handler_one, exception_handler_two])
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = DefaultEvent(
-        message=message,
-    )
-    tracker.emit(event_message, strategies_names=["fake", mock_strategy_one.name])
+    with caplog.at_level(logging.ERROR):
+        tracker.emit_exception(tracker_exception)
 
-    mock_strategy_one.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
-    )
+    exception_handler_one.capture_exception.assert_called_once_with(tracker_exception)
+    exception_handler_two.capture_exception.assert_called_once_with(tracker_exception)
 
-    mock_strategy_two.track.assert_not_called()
-
-
-def test_event_tracker_emit_for_all_providers_when_nonexistent_provider_name():
-    message = "test event"
-
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    event_message = DefaultEvent(
-        message=message,
-    )
-    tracker.emit(event_message, strategies_names=["nonexistent_provider"])
-
-    mock_strategy_one.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
-    )
-    mock_strategy_two.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
+    log_record = caplog.records[0]
+    assert (
+        log_record.message
+        == f"Error emitting exception for handler {exception_handler_one}: Handler Error"
     )
 
 
-def test_event_tracker_emit_when_strategy_by_message():
-    message = "test event"
+def test_tracker_emit_event_when_handler_raises(tracker_event, handlers_mocks, caplog):
+    event_handler_one = handlers_mocks["event_handlers"][0]
+    event_handler_two = handlers_mocks["event_handlers"][1]
+    event_handler_one.capture_event.side_effect = Exception("Handler Error")
 
-    mock_strategy = create_mock_strategy("mock_strategy")
-    mock_strategy_message = create_mock_strategy("mock_strategy_message")
+    tracker = Tracker(event_handlers=[event_handler_one, event_handler_two])
 
-    tracker = EventTracker(
-        [mock_strategy, mock_strategy_message],
-        strategies_by_message={
-            "not_value_event": ["not_used_provider"],
-            "default_event": [mock_strategy_message.name],
-        },
-    )
+    with caplog.at_level(logging.ERROR):
+        tracker.emit_event(tracker_event)
 
-    event_message = DefaultEvent(message=message)
-    tracker.emit(event_message)
+    event_handler_one.capture_event.assert_called_once_with(tracker_event)
+    event_handler_two.capture_event.assert_called_once_with(tracker_event)
 
-    mock_strategy.track.assert_not_called()
-    mock_strategy_message.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
+    log_record = caplog.records[0]
+    assert (
+        log_record.message
+        == f"Error emitting event for handler {event_handler_one}: Handler Error"
     )
 
 
-def test_event_tracker_emit_when_strategy_by_message_and_names():
-    message = "test event"
+def test_tracker_set_tags(handlers_mocks):
+    message_handler = handlers_mocks["message_handlers"][0]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+    event_handler = handlers_mocks["event_handlers"][0]
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-    mock_strategy_message = create_mock_strategy("mock_strategy_message")
-
-    tracker = EventTracker(
-        [mock_strategy_one, mock_strategy_two, mock_strategy_message],
-        strategies_by_message={"default_event": [mock_strategy_message.name]},
+    tracker = Tracker(
+        message_handlers=[message_handler],
+        exception_handlers=[exception_handler],
+        event_handlers=[event_handler],
     )
 
-    event_message = DefaultEvent(message=message)
-    tracker.emit(event_message, strategies_names=[mock_strategy_one.name])
-
-    mock_strategy_one.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
-    )
-    mock_strategy_two.track.assert_not_called()
-    mock_strategy_message.track.assert_called_once_with(
-        event=message,
-        tags=None,
-        contexts=None,
-    )
-
-
-def test_event_tracker_set_tags():
-    tags = {"key1": "value1", "key2": 123}
-
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
+    tags = {"key": "value"}
     tracker.set_tags(tags)
 
-    mock_strategy_one.set_tags.assert_called_once_with(tags)
-    mock_strategy_two.set_tags.assert_called_once_with(tags)
+    message_handler.set_tags.assert_called_once_with(tags)
+    exception_handler.set_tags.assert_called_once_with(tags)
+    event_handler.set_tags.assert_called_once_with(tags)
 
 
-def test_event_tracker_set_tags_with_strategies_names():
-    tags = {"key1": "value1", "key2": 123}
+def test_tracker_set_tags_when_handler_raises(handlers_mocks, caplog):
+    message_handler = handlers_mocks["message_handlers"][0]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+    event_handler = handlers_mocks["event_handlers"][0]
+    message_handler.set_tags.side_effect = Exception("Handler Error")
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
+    tracker = Tracker(
+        message_handlers=[message_handler],
+        exception_handlers=[exception_handler],
+        event_handlers=[event_handler],
+    )
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    tracker.set_tags(tags, strategies_names=[mock_strategy_one.name])
+    tags = {"key": "value"}
 
-    mock_strategy_one.set_tags.assert_called_once_with(tags)
-    mock_strategy_two.set_tags.assert_not_called()
+    with caplog.at_level(logging.ERROR):
+        tracker.set_tags(tags)
 
+    message_handler.set_tags.assert_called_once_with(tags)
+    exception_handler.set_tags.assert_called_once_with(tags)
+    event_handler.set_tags.assert_called_once_with(tags)
 
-def test_event_tracker_set_tags_when_strategy_raises_exception():
-    tags = {"key1": "value1", "key2": 123}
-
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-    mock_strategy_two.set_tags.side_effect = Exception("Strategy error")
-
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-
-    # This should not raise any exceptions despite one strategy failing
-    tracker.set_tags(tags)
-
-    mock_strategy_one.set_tags.assert_called_once_with(tags)
-    mock_strategy_two.set_tags.assert_called_once_with(tags)
+    log_record = caplog.records[0]
+    assert (
+        log_record.message
+        == f"Error setting tags for handler {message_handler}: Handler Error"
+    )
 
 
-def test_event_tracker_set_contexts():
-    contexts = {"context1": {"detail": "info", "number": 42}}
+def test_tracker_set_contexts(handlers_mocks):
+    message_handler = handlers_mocks["message_handlers"][0]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+    event_handler = handlers_mocks["event_handlers"][0]
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
+    tracker = Tracker(
+        message_handlers=[message_handler],
+        exception_handlers=[exception_handler],
+        event_handlers=[event_handler],
+    )
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
+    contexts = {"context": {"detail": "info"}}
     tracker.set_contexts(contexts)
 
-    mock_strategy_one.set_contexts.assert_called_once_with(contexts)
-    mock_strategy_two.set_contexts.assert_called_once_with(contexts)
+    message_handler.set_contexts.assert_called_once_with(contexts)
+    exception_handler.set_contexts.assert_called_once_with(contexts)
+    event_handler.set_contexts.assert_called_once_with(contexts)
 
 
-def test_event_tracker_set_contexts_with_strategies_names():
-    contexts = {"context1": {"detail": "info", "blah": 123}}
+def test_tracker_set_contexts_when_handler_raises(handlers_mocks, caplog):
+    message_handler = handlers_mocks["message_handlers"][0]
+    exception_handler = handlers_mocks["exception_handlers"][0]
+    event_handler = handlers_mocks["event_handlers"][0]
+    message_handler.set_contexts.side_effect = Exception("Handler Error")
 
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
+    tracker = Tracker(
+        message_handlers=[message_handler],
+        exception_handlers=[exception_handler],
+        event_handlers=[event_handler],
+    )
 
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-    tracker.set_contexts(contexts, strategies_names=[mock_strategy_one.name])
+    contexts = {"context": {"detail": "info"}}
 
-    mock_strategy_one.set_contexts.assert_called_once_with(contexts)
-    mock_strategy_two.set_contexts.assert_not_called()
+    with caplog.at_level(logging.ERROR):
+        tracker.set_contexts(contexts)
 
+    message_handler.set_contexts.assert_called_once_with(contexts)
+    exception_handler.set_contexts.assert_called_once_with(contexts)
+    event_handler.set_contexts.assert_called_once_with(contexts)
 
-def test_event_tracker_set_contexts_when_strategy_raises_exception():
-    contexts = {"context1": {"detail": "info", "blah": 123}}
-
-    mock_strategy_one = create_mock_strategy("mock_strategy_one")
-    mock_strategy_two = create_mock_strategy("mock_strategy_two")
-    mock_strategy_two.set_contexts.side_effect = Exception("Strategy error")
-
-    tracker = EventTracker([mock_strategy_one, mock_strategy_two])
-
-    # This should not raise any exceptions despite one strategy failing
-    tracker.set_contexts(contexts)
-
-    mock_strategy_one.set_contexts.assert_called_once_with(contexts)
-    mock_strategy_two.set_contexts.assert_called_once_with(contexts)
+    log_record = caplog.records[0]
+    assert (
+        log_record.message
+        == f"Error setting contexts for handler {message_handler}: Handler Error"
+    )
