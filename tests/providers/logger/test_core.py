@@ -3,6 +3,11 @@ import logging
 from tracker.providers.logger import LoggerCore, _logger_contexts, _logger_tags
 
 
+def test_logger_core_context_vars_and_tags_initial_state():
+    assert _logger_tags.get() == {}
+    assert _logger_contexts.get() == {}
+
+
 def test_logger_core_init_with_config():
     logger = logging.getLogger("EventTracker.LoggerCore")
     logger.handlers = []

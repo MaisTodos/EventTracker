@@ -1,6 +1,6 @@
 import logging
 
-from tracker.blah import TrackerException
+from tracker.dtos import TrackerException
 from tracker.providers.logger import LoggerExceptionHandler
 
 

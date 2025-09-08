@@ -1,11 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import List, Mapping, Optional, Union
+from typing import Optional
 
-Primitive = Union[str, int, float, bool, None]
-JSONFields = Union[Primitive, List["JSONFields"], Mapping[str, "JSONFields"]]
-Tags = Mapping[str, Primitive]
-Contexts = Mapping[str, Mapping[str, JSONFields]]
+from .types import Contexts, Tags
 
 
 @dataclass

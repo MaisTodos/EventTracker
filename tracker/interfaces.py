@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .blah import TrackerEvent, TrackerException, TrackerMessage
+from .dtos import TrackerEvent, TrackerException, TrackerMessage
 
 
 class ISetMixin(ABC):

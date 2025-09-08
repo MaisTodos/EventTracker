@@ -1,18 +1,13 @@
 import logging
 from typing import List, Optional
 
-from .blah import (
-    Contexts,
-    Tags,
-    TrackerEvent,
-    TrackerException,
-    TrackerMessage,
-)
+from .dtos import TrackerEvent, TrackerException, TrackerMessage
 from .interfaces import (
     ITrackerHandlerEvent,
     ITrackerHandlerException,
     ITrackerHandlerMessage,
 )
+from .types import Contexts, Tags
 
 logger = logging.getLogger(__name__)
 
@@ -37,9 +32,7 @@ class Tracker:
             try:
                 handler.set_tags(tags)
             except Exception as e:
-                logger.error(  # pragma: no mutate
-                    f"Error setting tags for handler {handler}: {e}"
-                )
+                logger.error(f"Error setting tags for handler {handler}: {e}")
 
     def set_contexts(self, contexts: Contexts):
         handlers = (
@@ -50,33 +43,25 @@ class Tracker:
             try:
                 handler.set_contexts(contexts)
             except Exception as e:
-                logger.error(  # pragma: no mutate
-                    f"Error setting contexts for handler {handler}: {e}"
-                )
+                logger.error(f"Error setting contexts for handler {handler}: {e}")
 
     def emit_exception(self, event: TrackerException):
         for handler in self.__exception_handlers:
             try:
                 handler.capture_exception(event)
             except Exception as e:
-                logger.error(  # pragma: no mutate
-                    f"Error emitting exception for handler {handler}: {e}"
-                )
+                logger.error(f"Error emitting exception for handler {handler}: {e}")
 
     def emit_message(self, message: TrackerMessage):
         for handler in self.__message_handlers:
             try:
                 handler.capture_message(message)
             except Exception as e:
-                logger.error(  # pragma: no mutate
-                    f"Error emitting message for handler {handler}: {e}"
-                )
+                logger.error(f"Error emitting message for handler {handler}: {e}")
 
     def emit_event(self, event: TrackerEvent):
         for handler in self.__event_handlers:
             try:
                 handler.capture_event(event)
             except Exception as e:
-                logger.error(  # pragma: no mutate
-                    f"Error emitting event for handler {handler}: {e}"
-                )
+                logger.error(f"Error emitting event for handler {handler}: {e}")

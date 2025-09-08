@@ -1,18 +1,15 @@
 import logging
 from contextvars import ContextVar
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Dict, Optional
 
-from ..blah import Contexts, Tags, TrackerException, TrackerMessage
+from ..dtos import TrackerException, TrackerMessage
+from ..helpers import default_dict
 from ..interfaces import ITrackerHandlerException, ITrackerHandlerMessage
+from ..types import Contexts, Tags
 
-
-def default_dict() -> dict:
-    return {}
-
-
-_logger_tags = ContextVar("logger_tags", default=default_dict())
-_logger_contexts = ContextVar("logger_contexts", default=default_dict())
+_logger_tags = ContextVar("logger_tags", default=default_dict)
+_logger_contexts = ContextVar("logger_contexts", default=default_dict)
 
 
 class LoggerCore:

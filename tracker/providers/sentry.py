@@ -5,8 +5,9 @@ from typing import Dict, Optional, cast
 import sentry_sdk
 from sentry_sdk.integrations.logging import LoggingIntegration
 
-from ..blah import Contexts, JSONFields, Tags, TrackerException, TrackerMessage
+from ..dtos import TrackerException, TrackerMessage
 from ..interfaces import ITrackerHandlerException, ITrackerHandlerMessage
+from ..types import Contexts, JSONFields, Tags
 
 
 class SentryCore:
