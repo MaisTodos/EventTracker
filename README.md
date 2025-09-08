@@ -10,7 +10,7 @@ Por enquanto, você pode fazer referência pelo repositório GitHub:
 
 #### Exemplo utilizando Poetry:
 ```bash
-poetry add git+https://github.com/MaisTodos/EventTracker.git
+poetry add git+https://github.com/MaisTodos/Tracker.git
 ```
 
 ## Configuração Inicial
