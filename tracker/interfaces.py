@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 
 from .dtos import TrackerEvent, TrackerException, TrackerMessage
+from .types import Contexts, Tags
 
 
 class ISetMixin(ABC):
     @abstractmethod
-    def set_tags(self, tags): ...
+    def set_tags(self, tags: Tags): ...
 
     @abstractmethod
-    def set_contexts(self, contexts): ...
+    def set_contexts(self, contexts: Contexts): ...
 
 
 class ITrackerHandlerException(ISetMixin, ABC):

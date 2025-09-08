@@ -45,10 +45,10 @@ class LoggerMessageHandler(ITrackerHandlerMessage):
     def __init__(self, core: LoggerCore):
         self.core = core
 
-    def set_tags(self, tags):
+    def set_tags(self, tags: Tags):
         self.core.set_tags(tags)
 
-    def set_contexts(self, contexts):
+    def set_contexts(self, contexts: Contexts):
         self.core.set_contexts(contexts)
 
     def capture_message(self, tracker_message: TrackerMessage):
@@ -67,10 +67,10 @@ class LoggerExceptionHandler(ITrackerHandlerException):
     def __init__(self, core: LoggerCore):
         self.core = core
 
-    def set_tags(self, tags):
+    def set_tags(self, tags: Tags):
         self.core.set_tags(tags)
 
-    def set_contexts(self, contexts):
+    def set_contexts(self, contexts: Contexts):
         self.core.set_contexts(contexts)
 
     def capture_exception(self, tracker_exception: TrackerException):
