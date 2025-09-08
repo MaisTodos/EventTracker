@@ -1,4 +1,4 @@
-# EventTracker
+# Tracker
 
 Uma biblioteca modular e extensível para rastreamento de eventos, mensagens e exceções.
 
