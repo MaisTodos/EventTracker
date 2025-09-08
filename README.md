@@ -1,4 +1,4 @@
-# EventTracker
+# Tracker
 
 Uma biblioteca modular e extensível para rastreamento de eventos, mensagens e exceções.
 
@@ -10,7 +10,7 @@ Por enquanto, você pode fazer referência pelo repositório GitHub:
 
 #### Exemplo utilizando Poetry:
 ```bash
-poetry add git+https://github.com/MaisTodos/EventTracker.git
+poetry add git+https://github.com/MaisTodos/Tracker.git
 ```
 
 ## Configuração Inicial

@@ -9,31 +9,31 @@ def test_logger_core_context_vars_and_tags_initial_state():
 
 
 def test_logger_core_init_with_config():
-    logger = logging.getLogger("EventTracker.LoggerCore")
+    logger = logging.getLogger("Tracker.LoggerCore")
     logger.handlers = []
 
     stream_handler = logging.StreamHandler()
     LoggerCore(LoggerCore.LoggerConfig(logger_handler=stream_handler))
 
-    logger = logging.getLogger("EventTracker.LoggerCore")
+    logger = logging.getLogger("Tracker.LoggerCore")
     assert len(logger.handlers) == 1
     assert logger.handlers[0] == stream_handler
 
     LoggerCore(LoggerCore.LoggerConfig())
 
     # No new handler added
-    logger = logging.getLogger("EventTracker.LoggerCore")
+    logger = logging.getLogger("Tracker.LoggerCore")
     assert len(logger.handlers) == 1
     assert logger.handlers[0] == stream_handler
 
 
 def test_logger_core_init_without_config():
-    logger = logging.getLogger("EventTracker.LoggerCore")
+    logger = logging.getLogger("Tracker.LoggerCore")
     logger.handlers = []
 
     LoggerCore(LoggerCore.LoggerConfig())
 
-    logger = logging.getLogger("EventTracker.LoggerCore")
+    logger = logging.getLogger("Tracker.LoggerCore")
     assert len(logger.handlers) == 1
     assert isinstance(logger.handlers[0], logging.StreamHandler)
 

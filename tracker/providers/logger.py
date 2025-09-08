@@ -18,7 +18,7 @@ class LoggerCore:
         logger_handler: Optional[logging.Handler] = None
 
     def __init__(self, config: LoggerConfig):
-        self.logger = logging.getLogger("EventTracker.LoggerCore")
+        self.logger = logging.getLogger("Tracker.LoggerCore")
 
         if len(self.logger.handlers):
             # Avoid adding multiple handlers
