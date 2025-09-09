@@ -48,7 +48,7 @@ jobs:
     
     - name: ISort
       run: |
-        poetry run isort --check-only --diff .
+        poetry run isort --check-only --diff tests/ tracker/
 
     - name: Tests with coverage
       run: |

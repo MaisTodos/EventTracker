@@ -7,7 +7,7 @@ coverage:
 	poetry run coverage html
 
 isort:
-	poetry run isort .
+	poetry run isort tests/ tracker/
 
 black:
 	poetry run black .
