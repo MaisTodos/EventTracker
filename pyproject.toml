@@ -1,6 +1,6 @@
 [project]
 name = "tracker"
-version = "0.2.0"
+version = "0.3.0"
 description = ""
 authors = [
     {name = "Gabriel de Oliveira Chaves", email = "gabriel.chaves@maistodos.com.br"},
@@ -28,6 +28,7 @@ mutmut = "^3.3.1"
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
+skip = ["mutants"]
 
 [tool.coverage.run]
 omit = [
