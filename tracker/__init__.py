@@ -7,6 +7,7 @@ from .interfaces import (
 )
 from .providers import (
     LoggerCore,
+    LoggerEventHandler,
     LoggerExceptionHandler,
     LoggerMessageHandler,
     SentryCore,
@@ -30,6 +31,7 @@ __all__ = [
     "LoggerCore",
     "LoggerExceptionHandler",
     "LoggerMessageHandler",
+    "LoggerEventHandler",
     "SentryCore",
     "SentryExceptionHandler",
     "SentryMessageHandler",

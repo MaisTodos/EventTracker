@@ -1,4 +1,9 @@
-from .logger import LoggerCore, LoggerExceptionHandler, LoggerMessageHandler
+from .logger import (
+    LoggerCore,
+    LoggerEventHandler,
+    LoggerExceptionHandler,
+    LoggerMessageHandler,
+)
 from .sentry import SentryCore, SentryExceptionHandler, SentryMessageHandler
 
 __all__ = [
@@ -8,4 +13,5 @@ __all__ = [
     "LoggerCore",
     "LoggerMessageHandler",
     "LoggerExceptionHandler",
+    "LoggerEventHandler",
 ]

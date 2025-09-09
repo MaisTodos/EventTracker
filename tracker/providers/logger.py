@@ -1,11 +1,15 @@
 import logging
 from contextvars import ContextVar
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Optional
 
-from ..dtos import TrackerException, TrackerMessage
+from ..dtos import TrackerEvent, TrackerException, TrackerMessage
 from ..helpers import default_dict
-from ..interfaces import ITrackerHandlerException, ITrackerHandlerMessage
+from ..interfaces import (
+    ITrackerHandlerEvent,
+    ITrackerHandlerException,
+    ITrackerHandlerMessage,
+)
 from ..types import Contexts, Tags
 
 _logger_tags = ContextVar("logger_tags", default=default_dict)
@@ -90,3 +94,25 @@ class LoggerExceptionHandler(ITrackerHandlerException):
             exc_info=tracker_exception.exception,
             extra=extra,
         )
+
+
+class LoggerEventHandler(ITrackerHandlerEvent):
+    def __init__(self, core: LoggerCore):
+        self.core = core
+
+    def set_tags(self, tags: Tags):
+        self.core.set_tags(tags)
+
+    def set_contexts(self, contexts: Contexts):
+        self.core.set_contexts(contexts)
+
+    def capture_event(self, tracker_event: TrackerEvent):
+        extra = {"tags": _logger_tags.get(), "contexts": _logger_contexts.get()}
+
+        if tracker_event.tags:
+            extra["tags"].update(tracker_event.tags)
+
+        if tracker_event.contexts:
+            extra["contexts"].update(tracker_event.contexts)
+
+        self.core.logger.info(tracker_event.event.value, extra=extra)
