@@ -7,35 +7,23 @@ authors = [
     {name = "Johnathan Barbosa de Araujo", email = "johnathan.araujo@maistodos.com.br"}
 ]
 readme = "README.md"
-requires-python = ">=3.7,<4.0"
+requires-python = ">=3.9,<4.0"
 dependencies = [
-    "sentry-sdk>=2.35.2,<3.0.0"
+    "sentry-sdk (>=2.35.2,<3.0.0)"
 ]
 
-[tool.poetry]
-name = "tracker"
-version = "0.3.0"
-description = ""
-authors = [
-    "Gabriel de Oliveira Chaves <gabriel.chaves@maistodos.com.br>",
-    "Johnathan Barbosa de Araujo <johnathan.araujo@maistodos.com.br>"
-]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry.dependencies]
-python = ">=3.8,<4.0"
-sentry-sdk = ">=2.35.2,<3.0.0"
-
 [tool.poetry.group.dev.dependencies]
 ipdb = "^0.13.13"
-pytest = "^8.1.1"
-black = "^24.1.0"
-isort = "^5.13.2"
-coverage = {version = "^6.5", python = ">=3.8"}
-mutmut = "^3.1.1"
+pytest = "^8.4.1"
+black = "^25.1.0"
+isort = "^6.0.1"
+coverage = "^7.10.6"
+mutmut = "^3.3.1"
 
 [tool.isort]
 multi_line_output = 3
